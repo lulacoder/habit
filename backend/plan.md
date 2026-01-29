@@ -43,3 +43,27 @@ Copy
   "dev": "nodemon src/server.js"
 }
 Acceptance Criteria: npm install completes without errors. Folder structure exists.
+
+
+Phase 2: Configuration Layer (Config Folder)
+Objective: Database connection and Better Auth initialization.
+File: src/config/db.js
+Export async function connectDB() that:
+Uses mongoose.connect(process.env.MONGODB_URI)
+Returns mongoose.connection.db (native DB instance) for Better Auth adapter
+Includes basic error handling and console.log on success
+Use ES module imports (not require)
+File: src/config/auth.js
+Import betterAuth from better-auth
+Import mongodbAdapter from better-auth/adapters/mongodb
+Import connectDB from ./db.js
+Export async function initAuth() that:
+Awaits connectDB() to get DB instance
+Returns betterAuth({...}) configured with:
+database: mongodbAdapter(db)
+emailAndPassword: { enabled: true, autoSignInAfterRegistration: true }
+secret: process.env.BETTER_AUTH_SECRET
+advanced.defaultCookieAttributes: { secure: process.env.NODE_ENV === 'production', sameSite: 'lax', httpOnly: true, path: '/' }
+Export a lazy getter (e.g., getAuth()) that caches the initAuth() promise for server.js to use
+Acceptance Criteria: initAuth() can be called and returns configured auth object without errors.
+
