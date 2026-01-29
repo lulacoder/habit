@@ -67,3 +67,61 @@ advanced.defaultCookieAttributes: { secure: process.env.NODE_ENV === 'production
 Export a lazy getter (e.g., getAuth()) that caches the initAuth() promise for server.js to use
 Acceptance Criteria: initAuth() can be called and returns configured auth object without errors.
 
+Phase 3: Middleware Layer
+Objective: Authentication guard and request validation.
+File: src/middleware/requireAuth.js
+Export higher-order function (auth) => async (req, res, next)
+Inside handler:
+Call await auth.api.getSession({ headers: req.headers })
+If no session: return 401 JSON { error: "Unauthorized" }
+If session: set req.userId = session.user.id and call next()
+Ensure it handles async errors properly (doesn't crash server)
+File: src/middleware/validation.js
+Import zod
+Create habitSchema with strict Zod validation:
+title: string, min 1, max 100
+description: string, min 1
+frequency: enum ["daily", "weekly", "weekdays", "weekends"]
+category: string, min 1
+color: string matching regex ^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$
+Create completionSchema:
+date: string in ISO datetime format (use z.string().datetime())
+Export validate(schema) middleware factory:
+Parses req.body with schema
+On fail: return 400 with Zod error details
+On success: call next()
+Export validators object containing habit and completion (pre-wrapped with validate)
+Acceptance Criteria: Middleware functions can be imported and used in Express routes.
+
+Phase 4: Data Access Layer (Models)
+Objective: Mongoose schema and Repository pattern implementation.
+File: src/models/Habit.js
+Import mongoose
+Define schema with fields:
+userId: String, required, indexed (for query performance)
+title: String, required, trimmed, max 100 chars
+description: String, required, trimmed
+frequency: String, enum ["daily", "weekly", "weekdays", "weekends"], required
+category: String, required, trimmed
+color: String, required, validated with hex regex
+completedDates: [Date] (array of dates, default empty)
+timestamps: true (createdAt, updatedAt)
+Export const Habit = mongoose.model('Habit', habitSchema)
+File: src/models/habit.repository.js
+Import Habit from ./Habit.js
+Export habitRepository object with these exact method signatures:
+JavaScript
+Copy
+findAllByUser(userId) -> Returns lean array, sorted by createdAt desc, excludes completedDates
+findById(id, userId) -> Returns single habit (lean) excluding completedDates, or null
+create(data) -> Creates and saves new habit, returns document
+update(id, userId, data) -> Finds and updates, returns updated doc excluding completedDates
+delete(id, userId) -> Finds and deletes, returns deleted doc
+getCompletions(id, userId) -> Returns only { completedDates } array
+addCompletion(id, userId, date) -> Uses $addToSet to add date, returns doc with dates
+removeCompletion(id, userId, date) -> Uses $pull to remove date, returns doc with dates
+Implementation rules:
+Use .lean() for read operations (performance)
+Use .select('-completedDates') where specified
+Handle MongoDB ObjectId vs String correctly (mongoose handles this)
+Acceptance Criteria: Repository methods can be called and perform CRUD operations on MongoDB.
