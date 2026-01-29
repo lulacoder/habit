@@ -125,3 +125,67 @@ Use .lean() for read operations (performance)
 Use .select('-completedDates') where specified
 Handle MongoDB ObjectId vs String correctly (mongoose handles this)
 Acceptance Criteria: Repository methods can be called and perform CRUD operations on MongoDB.
+
+
+Phase 5: Business Logic Layer (Controllers)
+Objective: HTTP request handlers using Repository.
+File: src/routes/controllers.js
+Import habitRepository from ../models/habit.repository.js
+Export habitController object with async methods:
+Methods to implement:
+getHabits(req, res) - Get userId from req.userId, call repo.findAllByUser, return 200 JSON
+createHabit(req, res) - Merge req.body + userId, call repo.create, return 201 JSON
+getHabit(req, res) - Get id from req.params.id, call repo.findById, if null return 404, else 200
+updateHabit(req, res) - Call repo.update with id, userId, req.body, handle 404 if null
+deleteHabit(req, res) - Call repo.delete, handle 404, return success message
+getCompletions(req, res) - Call repo.getCompletions, return { completedDates } or 404
+addCompletion(req, res) - Parse req.body.date to Date object, call repo.addCompletion, return updated dates array
+removeCompletion(req, res) - Parse req.params.date to Date object, call repo.removeCompletion
+Error Handling: Wrap all in try-catch. On error, return 500 with { error: error.message }.
+Acceptance Criteria: Controllers don't interact with mongoose directly (only via repository) and always use req.userId for security.
+Phase 6: Routing Layer
+Objective: Thin Express router wiring everything together.
+File: src/routes/habits.js
+Import Router from 'express'
+Import habitController from './controllers.js'
+Import validators from '../middleware/validation.js'
+Create router instance
+Define routes exactly:
+JavaScript
+Copy
+GET    /          -> habitController.getHabits
+POST   /          -> validators.habit, habitController.createHabit
+GET    /:id       -> habitController.getHabit
+PUT    /:id       -> validators.habit, habitController.updateHabit
+DELETE /:id       -> habitController.deleteHabit
+
+GET    /:id/completions          -> habitController.getCompletions
+POST   /:id/completions          -> validators.completion, habitController.addCompletion
+DELETE /:id/completions/:date    -> habitController.removeCompletion
+Export default router.
+Acceptance Criteria: Router exports clean route definitions, no business logic in this file.
+
+
+Phase 7: Server Integration
+Objective: Wire everything together in entry point.
+File: src/server.js
+Imports:
+express, cors, dotenv (call config())
+toNodeHandler from 'better-auth'
+initAuth from './config/auth.js'
+requireAuth from './middleware/requireAuth.js'
+habitRoutes from './routes/habits.js'
+Setup steps:
+Create express app
+Define async startServer() function:
+Initialize auth: const auth = await initAuth()
+Setup CORS: app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }))
+Mount Better Auth BEFORE express.json(): app.all('/api/auth/*', toNodeHandler(auth))
+Add body parser: app.use(express.json())
+Mount protected routes: app.use('/api/habits', requireAuth(auth), habitRoutes)
+Add health check: app.get('/health', (req, res) => res.json({ status: 'ok' }))
+Listen on PORT with console.log
+Important Notes for Codex:
+Better Auth endpoints must receive raw body (not parsed by express.json()), hence the order is critical
+requireAuth(auth) is a function call passing the auth instance
+Acceptance Criteria: Server starts without errors. /health responds. Auth routes are accessible.

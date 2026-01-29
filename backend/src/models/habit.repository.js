@@ -51,3 +51,5 @@ export const habitRepository = {
 		).select("completedDates");
 	},
 };
+
+export default habitRepository;
