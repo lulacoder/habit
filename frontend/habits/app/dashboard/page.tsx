@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, RefreshCw } from "lucide-react";
+import { Plus, RefreshCw, Sparkles, Flame, Target } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { habitsApi } from "@/lib/api";
 import { Spinner } from "@/components/spinner";
@@ -101,18 +101,21 @@ export default function DashboardPage() {
     h.completedDates.some((d) => new Date(d).toDateString() === todayString)
   ).length;
 
+  const progressPercentage = habits.length > 0 ? Math.round((completedToday / habits.length) * 100) : 0;
+
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-6 py-12">
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 px-6 py-12">
       {/* Header Section */}
       <header className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-400">
+        <div className="space-y-2">
+          <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-emerald-400">
+            <Sparkles className="h-3.5 w-3.5" />
             {formattedDate}
           </p>
-          <h1 className="text-3xl font-semibold text-white">
-            Welcome back, {session.user?.name ?? "there"}
+          <h1 className="text-4xl font-bold text-white">
+            Welcome back, <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">{session.user?.name ?? "there"}</span>
           </h1>
-          <p className="text-sm text-zinc-400">
+          <p className="text-base text-zinc-400">
             {habits.length === 0
               ? "Start building your daily routine"
               : `${completedToday} of ${habits.length} habits completed today`}
@@ -122,7 +125,7 @@ export default function DashboardPage() {
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-2 self-start rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-400 hover:shadow-emerald-500/40 sm:self-auto"
+          className="inline-flex items-center gap-2 self-start rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:shadow-emerald-500/40 hover:scale-105 sm:self-auto"
         >
           <Plus className="h-4 w-4" />
           New Habit
@@ -131,21 +134,38 @@ export default function DashboardPage() {
 
       {/* Progress Bar (if habits exist) */}
       {habits.length > 0 && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-zinc-400">Today's Progress</span>
-            <span className="font-medium text-white">
-              {Math.round((completedToday / habits.length) * 100)}%
-            </span>
+        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
+                <Target className="h-5 w-5 text-emerald-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-white">Today's Progress</h3>
+                <p className="text-sm text-zinc-400">{completedToday} of {habits.length} habits complete</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Flame className={`h-5 w-5 ${progressPercentage >= 100 ? 'text-orange-400' : 'text-zinc-500'}`} />
+              <span className={`text-2xl font-bold ${progressPercentage >= 100 ? 'text-emerald-400' : 'text-white'}`}>
+                {progressPercentage}%
+              </span>
+            </div>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-white/10">
+
+          <div className="h-3 overflow-hidden rounded-full bg-white/10">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-700 ease-out"
               style={{
-                width: `${(completedToday / habits.length) * 100}%`,
+                width: `${progressPercentage}%`,
               }}
             />
           </div>
+
+          {/* Celebration state */}
+          {progressPercentage >= 100 && (
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-emerald-500/10 to-teal-500/10 animate-pulse-slow" />
+          )}
         </div>
       )}
 
@@ -154,12 +174,12 @@ export default function DashboardPage() {
         {isLoading ? (
           <HabitListSkeleton />
         ) : error ? (
-          <div className="flex flex-col items-center gap-4 rounded-2xl border border-red-500/20 bg-red-500/5 p-8 text-center">
+          <div className="flex flex-col items-center gap-4 rounded-2xl border border-red-500/20 bg-red-500/5 p-8 text-center backdrop-blur-sm">
             <p className="text-red-400">{error}</p>
             <button
               type="button"
               onClick={fetchHabits}
-              className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm text-white transition hover:bg-white/5"
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-2.5 text-sm text-white transition hover:bg-white/10"
             >
               <RefreshCw className="h-4 w-4" />
               Try Again

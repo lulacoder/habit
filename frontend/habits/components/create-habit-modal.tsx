@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, Sparkles } from "lucide-react";
 import { ColorPicker } from "./color-picker";
 import { habitsApi } from "@/lib/api";
 import {
@@ -93,29 +93,39 @@ export function CreateHabitModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-black/70 backdrop-blur-md animate-fade-in"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-lg rounded-2xl border border-white/10 bg-zinc-900/95 p-6 shadow-2xl animate-slide-up">
+      <div className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-[#111118]/95 shadow-2xl shadow-black/50 backdrop-blur-xl animate-slide-up">
+        {/* Gradient line at top */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
+
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-semibold text-white">Create New Habit</h2>
-            <p className="text-sm text-zinc-400">Build consistency one habit at a time</p>
+        <div className="p-6 pb-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
+                <Sparkles className="h-6 w-6 text-emerald-400" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Create New Habit</h2>
+                <p className="text-sm text-zinc-400">Build consistency one habit at a time</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full p-2 text-zinc-400 transition hover:bg-white/10 hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-full p-2 text-zinc-400 transition hover:bg-white/10 hover:text-white"
-          >
-            <X className="h-5 w-5" />
-          </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {/* Title */}
           <div className="space-y-2">
             <label htmlFor="title" className="text-sm font-medium text-zinc-300">
@@ -127,7 +137,7 @@ export function CreateHabitModal({
               value={formData.title}
               onChange={(e) => handleChange("title", e.target.value)}
               placeholder="e.g., Exercise for 30 minutes"
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-zinc-500 transition focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-white placeholder-zinc-500 transition-all focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-400/20 focus:bg-white/[0.07]"
               maxLength={100}
             />
           </div>
@@ -143,7 +153,7 @@ export function CreateHabitModal({
               onChange={(e) => handleChange("description", e.target.value)}
               placeholder="Why is this habit important to you?"
               rows={3}
-              className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-zinc-500 transition focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
+              className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-white placeholder-zinc-500 transition-all focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-400/20 focus:bg-white/[0.07]"
             />
           </div>
 
@@ -158,7 +168,7 @@ export function CreateHabitModal({
                 id="frequency"
                 value={formData.frequency}
                 onChange={(e) => handleChange("frequency", e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white transition focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-white transition-all focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
               >
                 {FREQUENCY_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value} className="bg-zinc-900">
@@ -180,7 +190,7 @@ export function CreateHabitModal({
                 value={formData.category}
                 onChange={(e) => handleChange("category", e.target.value)}
                 placeholder="e.g., Health"
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-zinc-500 transition focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-white placeholder-zinc-500 transition-all focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-400/20 focus:bg-white/[0.07]"
               />
               <datalist id="category-suggestions">
                 {CATEGORY_SUGGESTIONS.map((cat) => (
@@ -203,7 +213,7 @@ export function CreateHabitModal({
 
           {/* Error Message */}
           {error && (
-            <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
+            <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400 backdrop-blur-sm">
               {error}
             </div>
           )}
@@ -213,14 +223,14 @@ export function CreateHabitModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded-xl border border-white/10 px-4 py-3 text-sm font-medium text-zinc-300 transition hover:bg-white/5"
+              className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-sm font-medium text-zinc-300 transition hover:bg-white/10"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 rounded-xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex-1 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:shadow-emerald-500/40 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? "Creating..." : "Create Habit"}
             </button>
