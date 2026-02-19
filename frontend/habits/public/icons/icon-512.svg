@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="102" fill="#0a0a0f"/>
+  
+  <!-- Bars representing habits/progress -->
+  <g transform="translate(85, 85)">
+    <!-- Bar 1 - Orange -->
+    <rect x="21" y="171" width="85" height="171" rx="16" fill="#E9A648"/>
+    
+    <!-- Bar 2 - Teal (tallest) -->
+    <rect x="139" y="43" width="85" height="299" rx="16" fill="#2DD4BF"/>
+    
+    <!-- Bar 3 - Yellow -->
+    <rect x="256" y="107" width="85" height="235" rx="16" fill="#FBBF24"/>
+    
+    <!-- Checkmark circle -->
+    <circle cx="309" cy="53" r="43" fill="#10b981"/>
+    <path d="M288 53 L304 69 L330 37" stroke="white" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

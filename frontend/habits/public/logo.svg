@@ -1,0 +1,32 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Orange bar (left) -->
+  <rect x="80" y="200" width="60" height="220" rx="12" fill="url(#orangeGradient)"/>
+  
+  <!-- Teal bar (center) -->
+  <rect x="180" y="160" width="60" height="260" rx="12" fill="url(#tealGradient)"/>
+  
+  <!-- Yellow/Orange bar (right) -->
+  <rect x="280" y="120" width="60" height="300" rx="12" fill="url(#yellowGradient)"/>
+  
+  <!-- Checkmark -->
+  <path d="M140 180 L200 240 L380 60" stroke="url(#checkGradient)" stroke-width="48" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <defs>
+    <linearGradient id="orangeGradient" x1="110" y1="200" x2="110" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E87B35"/>
+      <stop offset="100%" stop-color="#C55A20"/>
+    </linearGradient>
+    <linearGradient id="tealGradient" x1="210" y1="160" x2="210" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3B9AA8"/>
+      <stop offset="100%" stop-color="#2A7A87"/>
+    </linearGradient>
+    <linearGradient id="yellowGradient" x1="310" y1="120" x2="310" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E9A648"/>
+      <stop offset="100%" stop-color="#D4923A"/>
+    </linearGradient>
+    <linearGradient id="checkGradient" x1="140" y1="150" x2="380" y2="150" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E9A648"/>
+      <stop offset="100%" stop-color="#E87B35"/>
+    </linearGradient>
+  </defs>
+</svg>
