@@ -1,7 +1,9 @@
+// this is the data access layer for habits
 import { Habit } from "./Habit.js";
 
+// this is the function that finds all habits by user
 export const habitRepository = {
-	async findAllByUser(userId) {
+	async findAllByUser(userId) { 
 		return Habit.find({ userId })
 			.select("-completedDates")
 			.sort({ createdAt: -1 })

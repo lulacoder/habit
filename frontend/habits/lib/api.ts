@@ -1,5 +1,8 @@
+// this is the api client for habits
+
 import type { Habit, CreateHabitInput, UpdateHabitInput } from "@/types/habit";
 
+// the base url for the api
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 async function fetchWithAuth<T>(

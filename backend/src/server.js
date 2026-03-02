@@ -13,6 +13,7 @@ const app = express();
 async function startServer() {
 	const auth = await initAuth();
 
+	// middleware that handles cors
 	app.use(
 		cors({
 			origin: process.env.FRONTEND_URL,
@@ -20,12 +21,15 @@ async function startServer() {
 		})
 	);
 
-	app.use("/api/auth", toNodeHandler(auth));
+	// middleware that handles auth
+	app.use("/api/auth", toNodeHandler(auth)); // middleware that handles auth and returns the auth instance
 	app.use(express.json());
 
-	app.use("/api/habits", requireAuth(auth), habitRoutes);
+	// middleware that handles habits
+	app.use("/api/habits", requireAuth(auth), habitRoutes); // middleware that handles habits and returns the habit instance
 
-	app.get("/health", (req, res) => res.json({ status: "ok" }));
+	// middleware that handles health check
+	app.get("/health", (req, res) => res.json({ status: "ok" })); // middleware that handles health check
 
 	const port = process.env.PORT || 3001;
 	app.listen(port, () => {

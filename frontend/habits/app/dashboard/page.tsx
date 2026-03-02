@@ -22,6 +22,7 @@ export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [calendarHabit, setCalendarHabit] = useState<Habit | null>(null);
 
+  // this is the function that fetches habits from the api
   const fetchHabits = useCallback(async () => {
     try {
       setError(null);
@@ -48,10 +49,12 @@ export default function DashboardPage() {
     }
   }, [session, fetchHabits]);
 
+  // this is the function that handles habit creation
   const handleHabitCreated = (habit: Habit) => {
     setHabits((prev) => [habit, ...prev]);
   };
 
+  // this is the function that handles habit updates
   const handleHabitUpdate = (updatedHabit: Habit) => {
     setHabits((prev) =>
       prev.map((h) => (h._id === updatedHabit._id ? updatedHabit : h))
@@ -116,8 +119,8 @@ export default function DashboardPage() {
             Welcome back, <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">{session.user?.name ?? "there"}</span>
           </h1>
           <p className="text-base text-zinc-400">
-            {habits.length === 0
-              ? "Start building your daily routine"
+            {habits.length === 0 // if there are no habits, display this message
+              ? "Start building your daily routine" 
               : `${completedToday} of ${habits.length} habits completed today`}
           </p>
         </div>

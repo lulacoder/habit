@@ -62,7 +62,7 @@ export function CreateHabitModal({
     setIsSubmitting(true);
     try {
       const habit = await habitsApi.create(formData);
-      onCreated(habit);
+      onCreated(habit);// this is the data access layer for habits
       // Reset form
       setFormData({
         title: "",
